@@ -1,10 +1,11 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+base_dir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(base_dir, 'test.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -20,4 +21,7 @@ with app.app_context():
     print("Current working directory:", os.getcwd())
     print("Database URI:", app.config['SQLALCHEMY_DATABASE_URI'])
     db.create_all()
-    print("Database created successfully.")
+    if os.path.exists(os.path.join(base_dir, 'test.db')):
+        print("Database file 'test.db' created successfully.")
+    else:
+        print("Database file 'test.db' not found.")
