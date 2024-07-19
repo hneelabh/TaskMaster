@@ -37,7 +37,7 @@
 #     app.run(debug=True)
 
 import os
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -84,6 +84,22 @@ def delete(id):
         return redirect('/')
     except:
         return 'There was a problem deleting your task.'
+    
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    task = Todo.query.get_or_404(id)
+
+    if request.method == 'POST':
+        task.content = request.form['content']
+
+        try:
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'There was an issue updating your task.'
+    else:
+        return render_template('update.html', task=task)
+
 
 
 if __name__ == "__main__":
